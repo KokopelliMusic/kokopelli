@@ -50,7 +50,12 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "quotes": "single",
+    "semi": "never",
+    "arrow-body-style": "as-needed",
+    "arrow-parens": "as-needed",
+    "no-var": true
   },
   "browserslist": {
     "production": [
