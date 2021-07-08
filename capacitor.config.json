@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "Kokopelli",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}

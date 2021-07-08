@@ -1,0 +1,8 @@
+{
+  "name": "Kokopelli",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "id": "7352ef71"
+}
