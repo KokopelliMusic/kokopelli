@@ -1,0 +1,14 @@
+#init-grid {
+    display: grid;
+    height: 100%;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 2fr;
+}
+
+#init-grid .under {
+    color: gray;
+}
+
+.kokopelli-img {
+    height: 40vh;
+}
+
