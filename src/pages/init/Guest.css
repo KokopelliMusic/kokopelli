@@ -1,0 +1,10 @@
+#init-guest {
+  height: 100%;
+  display: grid;
+  /* back title disclaimer input submit termsofuse filler*/
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+}
+
+.guest-input:focus {
+  border: solid 1px black;
+}
