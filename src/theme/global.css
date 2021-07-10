@@ -1,0 +1,60 @@
+body {
+    font-family: 'Montserrat';
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+    font-family: 'Montserrat';
+}
+
+div {
+    font-family: 'Montserrat';
+}
+
+a {
+    text-decoration: none;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.background {
+    background: rgb(222,100,255);
+    background: linear-gradient(0deg, rgba(222,100,255,0.5150812064965198) 0%, rgba(235,84,170,0.5568445475638051) 100%); 
+}
+
+.text-center {
+    text-align: center;
+}
+
+.bottom-text-font {
+    color: #4f4a4a;
+    font-size: 16px;
+}
+
+.width-90 {
+    width: 90%;
+}
+
+.white {
+    color: white;
+}
+
+.back {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 15px;
+}
+
+.back span {
+    font-size: 18px;
+    padding-left: 4px;
+}
+
+.back-icon {
+    font-size: 24px;
+}
