@@ -1,18 +1,27 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
 import React, { useState } from 'react'
+import { initGuest } from '../../storage/user'
 import { redirect } from '../../util'
 import './Guest.css'
 
 const Guest: React.FC = () => {
 
-  const [name, setName] = useState<string>()
+  const [name, setName]           = useState<string>()
+  const [sessionId, setSessionId] = useState<string>()
 
-  const onSubmit = (event: React.MouseEvent<HTMLElement>): void => {
-    if (name && name.length > 1) {
+  const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
+    if (name?.length && name.length > 2 && sessionId?.length && sessionId.length === 4) {
+      await initGuest({
+        username: name,
+        isGuest: true,
+        initialized: true,
+        sessionId: sessionId,
+        playlistName: 'TODO'
+      })
       redirect('/session')
     } else {
-      alert('Please enter a username')
+      alert('Please enter a username and/or a valid session ID')
     }
   }
 
@@ -33,14 +42,15 @@ const Guest: React.FC = () => {
 
           <div className="center">
             <p className="text-center">
-              As a guest you can only edit existing <br/> playlists
+              As a guest you can only edit existing sessions. You can find the session ID<br/> 
+              in the top left corner of the player.
             </p>
           </div>
 
           <div className="center">
             <IonInput
               className="width-90 guest-input"
-              autocomplete="on"
+              autocomplete="nickname"
               autofocus
               clearInput
               inputMode="text"
@@ -48,6 +58,15 @@ const Guest: React.FC = () => {
               value={name}
               placeholder="Username" 
               onIonChange={e => setName(e.detail.value!)}/>
+            <IonInput
+              className="width-90 guest-input"
+              autocomplete="off"
+              clearInput
+              inputMode="text"
+              minlength={4}
+              value={sessionId}
+              placeholder="Session ID" 
+              onIonChange={e => setSessionId(e.detail.value!)}/>
           </div>
 
           <div className="center">
