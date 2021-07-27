@@ -32,36 +32,49 @@ import Register from './pages/init/Register'
 import Guest from './pages/init/Guest'
 import Home from './pages/Home'
 import Init from './pages/init/Init'
+import Spotify from './pages/add/Spotify'
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/init/guest">
-          <Guest />
-        </Route>
-        <Route exact path="/init/register">
-          <Register />
-        </Route>
-        <Route exact path="/init/signin">
-          <SignIn />
-        </Route>
-        <Route exact path="/session">
-          <Session />
-        </Route>
-        <Route exact path="/init">
-          <Init />
-        </Route>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        {/* Catch all else and redirect to home */}
-        <Route>
-          <Redirect to="/" />
-        </Route>
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-)
+const App: React.FC = () => {
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonRouterOutlet animated>
+          <Route exact path="/add/spotify">
+            <Spotify />
+          </Route>
+          <Route exact path="/add/youtube">
+            
+          </Route>
+          <Route exact path="/add/mp3">
+            
+          </Route>
+          <Route exact path="/init/guest">
+            <Guest />
+          </Route>
+          <Route exact path="/init/register">
+            <Register />
+          </Route>
+          <Route exact path="/init/signin">
+            <SignIn />
+          </Route>
+          <Route exact path="/session">
+            <Session />
+          </Route>
+          <Route exact path="/init">
+            <Init />
+          </Route>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          {/* Catch all else and redirect to home */}
+          <Route>
+            <Redirect to="/" />
+          </Route>
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  )
+}
 
 export default App

@@ -24,7 +24,8 @@ class Session extends React.Component {
     const userLen  = 5
 
     if (!initialized) {
-      redirect('/init')
+      alert('kut ionic')
+      // redirect('/init')
     }
 
     return (
