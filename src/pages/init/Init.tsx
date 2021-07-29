@@ -1,4 +1,5 @@
 import { IonButton, IonContent, IonImg, IonPage, IonRouterLink } from '@ionic/react'
+import { FirebaseAuthConsumer, IfFirebaseAuthed } from '@react-firebase/auth'
 import './Init.css'
 
 const Init: React.FC = () => {

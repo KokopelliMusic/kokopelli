@@ -33,47 +33,60 @@ import Guest from './pages/init/Guest'
 import Home from './pages/Home'
 import Init from './pages/init/Init'
 import Spotify from './pages/add/Spotify'
+import { FirebaseAuthConsumer, FirebaseAuthProvider } from '@react-firebase/auth'
+import firebase from './firebase'
+import { FIREBASE_CONFIG } from './config.json'
+import { createContext } from 'react'
+import FirebaseAuthContext from './context/FirebaseAuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const App: React.FC = () => {
 
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet animated>
-          <Route exact path="/add/spotify">
-            <Spotify />
-          </Route>
-          <Route exact path="/add/youtube">
+    <FirebaseAuthProvider firebase={firebase} {...FIREBASE_CONFIG}>
+      <FirebaseAuthContext>
+        <IonApp>
+          <IonReactRouter>
+            <IonRouterOutlet animated>
+              <ProtectedRoute redirectTo="/init" path="/add/spotify">
+                <Spotify />
+              </ProtectedRoute>
+              <ProtectedRoute redirectTo="/init" path="/add/youtube">
+                
+              </ProtectedRoute>
+              <ProtectedRoute redirectTo="/init" path="/add/mp3">
+                
+              </ProtectedRoute>
+              <Route exact path="/init/guest">
+                <Guest />
+              </Route>
+              <Route exact path="/init/register">
+                <Register />
+              </Route>
+              <Route exact path="/init/signin">
+                <SignIn />
+              </Route>
+              <ProtectedRoute redirectTo="/init" path="/session">
+                <Session />
+              </ProtectedRoute>
+              <ProtectedRoute redirectTo="/init" path="/init/session">
             
-          </Route>
-          <Route exact path="/add/mp3">
-            
-          </Route>
-          <Route exact path="/init/guest">
-            <Guest />
-          </Route>
-          <Route exact path="/init/register">
-            <Register />
-          </Route>
-          <Route exact path="/init/signin">
-            <SignIn />
-          </Route>
-          <Route exact path="/session">
-            <Session />
-          </Route>
-          <Route exact path="/init">
-            <Init />
-          </Route>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          {/* Catch all else and redirect to home */}
-          <Route>
-            <Redirect to="/" />
-          </Route>
-        </IonRouterOutlet>
-      </IonReactRouter>
-    </IonApp>
+              </ProtectedRoute>
+              <Route exact path="/init">
+                <Init />
+              </Route>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              {/* Catch all else and redirect to home */}
+              <Route>
+                <Redirect to="/" />
+              </Route>
+            </IonRouterOutlet>
+          </IonReactRouter>
+        </IonApp>
+      </FirebaseAuthContext>
+    </FirebaseAuthProvider>
   )
 }
 
