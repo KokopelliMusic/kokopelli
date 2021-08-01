@@ -6,3 +6,4 @@ firebase.initializeApp(FIREBASE_CONFIG)
 
 export default firebase 
 export const firebaseAuth = firebase.auth()
+export const database = firebase.database()
