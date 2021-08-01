@@ -21,9 +21,13 @@ a {
     align-items: center;
 }
 
-.background {
+/* .background {
     background: rgb(222,100,255);
     background: linear-gradient(0deg, rgba(222,100,255,0.5150812064965198) 0%, rgba(235,84,170,0.5568445475638051) 100%); 
+} */
+
+.background {
+    background-color: #ececec;
 }
 
 .text-center {
