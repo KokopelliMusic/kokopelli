@@ -1,6 +1,7 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
 import React, { useState } from 'react'
+import { firebaseAuth } from '../../firebase'
 import { initGuest } from '../../storage/user'
 import { redirect } from '../../util'
 import './Guest.css'
@@ -12,13 +13,18 @@ const Guest: React.FC = () => {
 
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     if (name?.length && name.length > 2 && sessionId?.length && sessionId.length === 4) {
+      const user = await firebaseAuth.signInAnonymously()
+      
       await initGuest({
         username: name,
         isGuest: true,
+        uid: user.user?.uid,
         initialized: true,
-        sessionId: sessionId,
+        sessionId: sessionId.toUpperCase(),
         playlistName: 'TODO'
       })
+
+        
       redirect('/session')
     } else {
       alert('Please enter a username and/or a valid session ID')
