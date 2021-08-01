@@ -9,6 +9,7 @@ export type User = Session & {
   username: string
   initialized: boolean
   isGuest: boolean
+  uid: string | undefined
 }
 
 export type AccountUser = User & {
@@ -25,7 +26,8 @@ export const initialUser: User = {
   initialized: false,
   sessionId: 'undefined',
   playlistName: 'undefined',
-  isGuest: true
+  isGuest: true,
+  uid: undefined
 }
 
 /**
