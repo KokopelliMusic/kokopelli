@@ -1,0 +1,58 @@
+.stage {
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+}
+
+#spotify-button {
+  background-color: #1DB954;
+  color: white;
+  height: 50px;
+  width: 20rem;
+  border-radius: 100px;
+  font-size: medium;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#spotify-button span {
+  padding-left: 10px;
+}
+
+#spotify-button svg {
+  height: 30px;
+  width: 30px;
+}
+
+#login-spotify {
+  display: grid;
+  grid-template-rows: 9fr 1fr;
+}
+
+#login-spotify #text {
+  width: 80%;
+  text-align: center; 
+}
+
+#connect {
+  display: grid;
+  grid-template-rows: 1fr 1fr 3fr 1fr;
+}
+
+#link {
+  color: var(--ion-color-primary);
+}
+
+.otp-input {
+  width: 3rem !important;
+  height: 3rem;
+  margin: 0 1rem;
+  font-size: 2rem;
+  text-transform: uppercase;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
