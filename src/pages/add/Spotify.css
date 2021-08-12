@@ -1,0 +1,36 @@
+#sp {
+  min-height: 100vh;
+}
+
+#sp-input {
+  width: 90vw;
+}
+
+.sp-result {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  padding: 16px;
+}
+
+.sp-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: start;
+  padding-left: 16px;
+}
+
+.sp-title {
+  font-weight: bold;
+}
+
+.sp-cover {
+  height: 100px;
+  width: 100px;
+}
+
+.sp-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,86 +1,136 @@
-import { IonContent, IonPage } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
+import { arrowBack, reload } from 'ionicons/icons'
 import React from 'react'
-import { splitList } from '../../util'
+import { AuthContext } from '../../context/FirebaseAuthContext'
+import { addSong } from '../../storage/playlist'
+import { getSession } from '../../storage/user'
 import './Spotify.css'
 
-type SpotifySong = {
-  title: string,
-  artist: string,
-  cover: string,
-  length: number,
-  coverArt: string
+type SpotifySearchSong = {
+  title: string
+  artist: string
+  cover: string
+  length: number
+  id: string
+  onClick: (song: SpotifySearchSong) => void
 }
 
 export default class Spotify extends React.Component {
 
   state = {
-    results: []
+    results: [],
+    playlist: ''
   }
 
-  onInput(e: React.FormEvent<HTMLInputElement>) {
-    let search: string = e.currentTarget.value
+  static contextType = AuthContext
+
+  onInput(e: React.FormEvent<HTMLIonInputElement>) {
+    let search = e.currentTarget.value
 
     if (!search) return
 
     fetch(`https://api.nierot.com/search/?query=${search}`)
       .then(data => data.json())
       .then(data => this.parseResults(data.body.tracks.items))
-      .then(data => console.log(this.state))
+  }
+
+  componentDidMount() {
+    getSession(this.context.user.uid)
+      .then(user => {
+        this.setState({
+          playlist: user.playlistId
+        })
+      })
+  }
+
+  onResultClick = async (song: SpotifySearchSong) => {
+    const { id, artist, title, cover, length } = song
+    await addSong(this.context.user.uid, this.state.playlist, {
+      id,
+      artist,
+      title,
+      cover,
+      length,
+      type: 'spotify'
+    }).then(() => window.location.reload())
   }
 
   parseResults(res: any) {
-    res.map((item: any) => <SpotifyResult song={item}/>)
-    this.setState({ results: res })
+    const reducer = (acc: string, cur: any, idx: number, arr: any[]) => {
+      if (idx === arr.length - 1) {
+        return acc.concat(cur.name)
+      }
+
+      return acc.concat(cur.name + ', ')
+    }
+
+    this.setState({ results: res.map((item: any) => <SpotifyResult {...{
+      title: item.name,
+      artist: item.album.artists.reduce(reducer, ''),
+      cover: item.album.images[0].url,
+      length: item.duration_ms,
+      id: item.id,
+      onClick: this.onResultClick
+    }}/>) })
   }
 
   render() {
     return <IonPage>
       <IonContent>
-        <div className="center">
-          <h2>Add a Spotify song</h2>
+        <div id="sp" className="background">
+          <div className="header width-90">
+            <a href="/session" className="back">
+              <IonIcon icon={arrowBack} className="back-icon"/>
+              <span>Back</span>
+            </a>
+          </div>
+          <div className="center">
+            <h2>Add a song to this playlist</h2>
+          </div>
+
+          <div className="center">
+            <IonInput
+              id="sp-input"
+              type="text"
+              autofocus
+              clearInput
+              enterkeyhint="search"
+              placeholder="Search on Spotify"
+              onInput={e => this.onInput(e)}
+            />
+          </div>
+
+          <div className="songs">
+            {this.state.results}
+          </div>
         </div>
 
-        <div>
-          <input
-            id="spotify-input"
-            className="input"
-            type="text"
-            placeholder="Search Spotify"
-            onInput={e => this.onInput(e)}
-          />
-        </div>
-
-        <div className="songs">
-          <SpotifyResult song={{
-              title: 'title',
-              artist: 'artist',
-              coverArt: 'coverart',
-              cover: 'cover',
-              length: 100000
-            }} />
-        </div>
       </IonContent>
     </IonPage>
   }
 }
 
-type SpotifyResultProps = {
-  song: SpotifySong
-}
 
-const SpotifyResult: React.FC<SpotifyResultProps> = (props: SpotifyResultProps) => {
+const SpotifyResult: React.FC<SpotifySearchSong> = (props: SpotifySearchSong) => {
 
-  return (
-    <div className="spotify-result">
-      <div className="cover-art">
+  return <div className="sp-result" key={props.id}>
+      <div className="sp-cover">
+        <img src={props.cover} alt="Cover Art" />
+      </div>
+      <div className="sp-card">
+        <div className="sp-title">
+          {props.title}
+        </div>
+        <div className="sp-artist">
+          {props.artist}
+        </div>
+      </div>
 
+      <div className="sp-button">
+        <IonButton onClick={() => props.onClick(props)}>
+          +
+        </IonButton>
       </div>
-      <div className="title">
-        <b>{props.song.title}</b>
-      </div>
-      <div className="artists">
-        {props.song.artist}
-      </div>
+
     </div>
-  )
 }
