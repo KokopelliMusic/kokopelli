@@ -1,0 +1,14 @@
+#new {
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+  display: grid;
+  grid-template-rows: 1fr 1fr 5fr;
+}
+
+#input {
+  padding-left: 2rem;
+  padding-right: 2rem;
+  display: grid;
+  grid-template-rows: 1fr 2fr 1fr;
+}
