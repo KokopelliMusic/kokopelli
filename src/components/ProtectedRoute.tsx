@@ -1,6 +1,8 @@
 import { AuthContext } from '../context/FirebaseAuthContext'
 import { useContext } from 'react'
 import { Redirect, Route } from 'react-router'
+import { IonIcon } from '@ionic/react'
+import { refresh } from 'ionicons/icons'
 
 interface ProtectedRouteProps {
     redirectTo: string,
@@ -25,7 +27,16 @@ const ProtectedRoute = (props: ProtectedRouteProps) => {
             </Route>
         }
     } else {
-        return <h1>Loading...</h1>
+        return <div className="background fullscreen-center">
+            <div className="sk-chase">
+            <div className="sk-chase-dot"></div>
+            <div className="sk-chase-dot"></div>
+            <div className="sk-chase-dot"></div>
+            <div className="sk-chase-dot"></div>
+            <div className="sk-chase-dot"></div>
+            <div className="sk-chase-dot"></div>
+            </div>
+        </div>
     }
 }
 

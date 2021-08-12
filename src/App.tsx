@@ -27,12 +27,13 @@ import './theme/global.css'
 
 /* Routes */
 import SignIn from './pages/init/SignIn'
-import Session from './pages/home/Session'
+import SessionPage from './pages/session/SessionPage'
 import Register from './pages/init/Register'
 import Guest from './pages/init/Guest'
 import Init from './pages/init/Init'
 import Spotify from './pages/add/Spotify'
 import Home from './pages/home/Home'
+import StartSession from './pages/session/StartSession'
 
 import { FirebaseAuthProvider } from '@react-firebase/auth'
 import firebase from './firebase'
@@ -40,6 +41,7 @@ import { FIREBASE_CONFIG } from './config.json'
 import FirebaseAuthContext from './context/FirebaseAuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Playlists from './pages/home/Playlists'
+import NewPlaylist from './pages/home/NewPlaylist'
 
 const App: React.FC = () => {
 
@@ -68,14 +70,17 @@ const App: React.FC = () => {
                 <SignIn />
               </Route>
               <ProtectedRoute redirectTo="/init" path="/session">
-                <Session />
+                <SessionPage />
               </ProtectedRoute>
               
               <ProtectedRoute redirectTo="/init" path="/playlists">
                 <Playlists />
               </ProtectedRoute>
+              <ProtectedRoute redirectTo="/init" path="/newplaylist">
+                <NewPlaylist />
+              </ProtectedRoute>
               <ProtectedRoute redirectTo="/init" path="/newsession">
-                TODO New Session
+                <StartSession />
               </ProtectedRoute>
               <ProtectedRoute redirectTo="/init" path="/joinsession">
                 TODO join session
