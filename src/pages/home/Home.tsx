@@ -1,15 +1,30 @@
 import { IonAvatar, IonContent, IonItem, IonLabel, IonList, IonNav, IonPage } from '@ionic/react'
-import { ReactNode } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../context/FirebaseAuthContext'
+import { getUser } from '../../storage/user'
 import './Home.css'
 
 const Home = () => {
 
+  const [username, setUsername] = useState('Loading')
+  const user = useContext(AuthContext)
+
+  useEffect(() => {
+    const fun = async () => {
+      await getUser(user.user?.uid!)
+        .then(user => setUsername(user.username))
+    }
+
+    fun()
+  }, [user])
+
   return <IonPage>
-    <IonContent id="home">
-      <div id="home-content" className="background">
+    <IonContent>
+      <div className="background fullscreen-ns">
+        <div>&nbsp;</div>
         <div id="home-title">
           <h1>
-            Hello {'Niels'}
+            Hello {username}
           </h1>
           <h4>
             Select an item below to get started
@@ -17,8 +32,8 @@ const Home = () => {
         </div>
         <div id="home-list">
           <Button text="My playlists" to="/playlists" />
-          <Button text="Start a new session" to="/home/newsession" />
-          <Button text="Join a session" to="/home/joinsession" />
+          <Button text="Start a new session" to="/newsession" />
+          <Button text="Join a session" to="/joinsession" />
         </div>
       </div>
     </IonContent>

@@ -3,10 +3,6 @@
   height: 100%;
 }
 
-#home-content {
-  height: 100%;
-}
-
 #home-title {
   margin: 2rem;
 }
@@ -28,10 +24,9 @@
   
   text-align: center;
 
-
   border: 1px;
   border-radius: 10px;
-  background-color: aliceblue;
+  background-color: white;
   /* background-color: var(--ion-color-primary-tint) */
 }
 
