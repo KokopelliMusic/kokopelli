@@ -1,31 +1,28 @@
 import { Storage } from '@capacitor/storage'
+import { database } from '../firebase'
 
 export type Session = {
   sessionId: string
-  playlistName: string
+  playlistId: string
 }
 
-export type User = Session & {
+export type User = {
   username: string
-  initialized: boolean
   isGuest: boolean
   uid: string | undefined
 }
 
 export type AccountUser = User & {
-  apiKey: string
   isGuest: false
 }
 
 export type GuestUser = User & {
   isGuest: true
+  sessionId: string
 }
 
 export const initialUser: User = {
   username: 'undefined',
-  initialized: false,
-  sessionId: 'undefined',
-  playlistName: 'undefined',
   isGuest: true,
   uid: undefined
 }
@@ -34,11 +31,9 @@ export const initialUser: User = {
  * Initialize an account
  * @param user A AccountUser instance
  */
-export const login = async (user: AccountUser) => {
-  await Storage.set({
-    key: 'user',
-    value: JSON.stringify(user)
-  })
+export const login = async (user: AccountUser): Promise<void> => {
+  return getRef(user.uid!, 'user')
+    .set(user)
 }
 
 /**
@@ -46,40 +41,37 @@ export const login = async (user: AccountUser) => {
  * @param user A GuestUser instance
  */
 export const initGuest = async (user: GuestUser) => {
-  await Storage.set({
-    key: 'user',
-    value: JSON.stringify(user)
-  })
+  return getRef(user.uid!, 'user')
+    .set(user)
 }
 
 /**
  * Get the user that is currently logged in. Can be of type AccountUser of GuestUser
  */
-export const getUser = async (): Promise<AccountUser | GuestUser> => {
-  return await Storage
-    .get({ key: 'user' })
-    .then(({ value }) => value != null ? JSON.parse(value) : initialUser)
+export const getUser = async (uid: string): Promise<AccountUser | GuestUser> => {
+  return await getRef(uid, 'user')
+    .get()
+    .then(snap => snap.val())
 }
 
 /**
  * Getter for the current session
  * @returns undefined if no session is set else a Session instance 
  */
-export const getSession = async (): Promise<Session | undefined> => {
-  return await Storage
-    .get({ key: 'user' })
-    .then(({ value }) => value != null ? JSON.parse(value) : null)
-    .then(session => session == null ? undefined : (session as Session))
+export const getSession = (uid: string): Promise<Session> => {
+  return getRef(uid, 'session')
+    .get()
+    .then(val => val.val())
 }
 
-export const setSession = async ({ sessionId, playlistName }: Session) => {
-  const user = await getUser()
-  await Storage.set({
-    key: 'user',
-    value: JSON.stringify({
-      ...user,
+export const setSession = ({ sessionId, playlistId }: Session, uid: string): Promise<void> => {
+  return getRef(uid, 'session')
+    .set( {
       sessionId,
-      playlistName
+      playlistId
     })
-  })
+}
+
+export const getRef = (uid: string, path: string) => {
+  return database.ref(`users/${uid}/${path}`)
 }
