@@ -1,0 +1,36 @@
+#playlists {
+  padding: 1rem;
+  height: 100%;
+  width: 100%;
+}
+
+#playlists h1 {
+  padding-left: 1rem;
+}
+
+#playlists ion-list {
+  padding-left: 0rem;
+}
+
+#playlists-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#btn {
+  padding-top: 10px;
+}
+
+#playlists-lists {
+  border-color: rgba(0, 0, 0, 0) !important;
+	background-color: rgba(0, 0, 0, 0) !important;
+}
+
+ion-item {
+  --ion-item-background: transparant;
+}
+
+ion-list {
+  --ion-item-background: transparent;
+}
