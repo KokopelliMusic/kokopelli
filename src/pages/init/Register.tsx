@@ -5,21 +5,27 @@ import firebase, { firebaseAuth } from '../../firebase'
 import { useState } from 'react'
 import { redirect } from '../../util'
 import { arrowBack } from 'ionicons/icons'
+import { login } from '../../storage/user'
 
 const Register: React.FC = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
 
   const register = () => {
-    if (email.length === 0 || password.length === 0) {
+    if (email.length === 0 || password.length === 0 || username.length === 0) {
       return alert('Please fill in both forms')
     }
     firebaseAuth
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => firebaseAuth.createUserWithEmailAndPassword(email, password))
-      .then(userCredential => {
-        redirect('/home')
+      .then(async userCredential => {
+        await login({
+          username,
+          uid: userCredential.user?.uid,
+          isGuest: false
+        }).then(() => redirect('/home'))
       })
       .catch(err => {
         alert(err)
@@ -56,7 +62,16 @@ const Register: React.FC = () => {
               placeholder="Password"
               type="password"
               clearInput
-              onIonChange={e => setPassword(e.detail.value!)} />    
+              onIonChange={e => setPassword(e.detail.value!)} />
+            <IonInput 
+              className="width-90"
+              value={username}
+              placeholder="Username"
+              type="text"
+              autocomplete="username"
+              clearInput
+              onIonChange={e => setUsername(e.detail.value!)} />  
+
           </div>
           <div className="center">
             <IonButton className="width-90" onClick={register}>Register</IonButton>

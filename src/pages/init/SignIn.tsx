@@ -3,6 +3,7 @@ import firebase from 'firebase'
 import { arrowBack } from 'ionicons/icons'
 import { useState } from 'react'
 import { firebaseAuth } from '../../firebase'
+import { login } from '../../storage/user'
 import { redirect } from '../../util'
 import './SignIn.css'
 
@@ -10,6 +11,7 @@ const SignIn: React.FC = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
 
   const register = () => {
     if (email.length === 0 || password.length === 0) {
@@ -18,8 +20,12 @@ const SignIn: React.FC = () => {
     firebaseAuth
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => firebaseAuth.signInWithEmailAndPassword(email, password))
-      .then(userCredential => {
-        redirect('/home')
+      .then(async userCredential => {
+        await login({
+          username,
+          uid: userCredential.user?.uid,
+          isGuest: false
+        }).then(() => redirect('/home'))
       })
       .catch(err => {
         alert(err)
@@ -41,7 +47,7 @@ const SignIn: React.FC = () => {
           Login
         </h1>
 
-        <div className="center">
+        <div className="center">          
           <IonInput 
             className="width-90"
             value={email}
@@ -56,7 +62,13 @@ const SignIn: React.FC = () => {
             placeholder="Password"
             type="password"
             clearInput
-            onIonChange={e => setPassword(e.detail.value!)} />    
+            onIonChange={e => setPassword(e.detail.value!)} />
+          <IonInput 
+            className="width-90"
+            value={username}
+            clearInput
+            placeholder="Username"
+            onIonChange={e => setUsername(e.detail.value!)} />
         </div>
         <div className="center">
           <IonButton className="width-90" onClick={register}>Login</IonButton>
@@ -64,7 +76,7 @@ const SignIn: React.FC = () => {
 
         <div className="center">
           <span className="text-center">
-            By loggin in, you agree to our&nbsp;
+            By logging in, you agree to our&nbsp;
             <a href="https://cdn.nierot.com/memes/trollface.png">Terms of Use</a> and&nbsp; 
             <a href="https://cdn.nierot.com/memes/trollface.png">Privacy Policy</a>
           </span>

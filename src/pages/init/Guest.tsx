@@ -19,11 +19,8 @@ const Guest: React.FC = () => {
         username: name,
         isGuest: true,
         uid: user.user?.uid,
-        initialized: true,
-        sessionId: sessionId.toUpperCase(),
-        playlistName: 'TODO'
+        sessionId: sessionId.toUpperCase()
       })
-
         
       redirect('/session')
     } else {
