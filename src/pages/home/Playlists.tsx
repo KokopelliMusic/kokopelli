@@ -1,7 +1,6 @@
 import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage } from '@ionic/react'
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from '../../context/FirebaseAuthContext'
-import { database } from '../../firebase'
 import firebase from 'firebase'
 import './Playlists.css'
 import { arrowBack } from 'ionicons/icons'
@@ -12,22 +11,9 @@ const Playlists = () => {
 
   const [playlists, setPlaylists] = useState<any[]>([])
   const user = useContext(AuthContext)
-  const playlistRef = database.ref(`users/${user.user?.uid}/playlists`)
 
   useEffect(() => {
     (async () => setPlaylists(await getPlaylists(user.user!.uid)))()
-    // playlistRef
-    //   .get()
-    //   .then(snap => {
-    //     let list: Object[] = []
-    //     snap.forEach(p => { list.push(p.val()) })
-    //     return list
-    //   })
-    //   .then(setPlaylists)
-    //   .catch(err => {
-    //     console.error(err)
-    //     alert(err)
-    //   })
   }, [user.user])
   
   const generateList = () => {

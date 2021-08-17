@@ -116,10 +116,13 @@ const LogIntoSpotify = ({ next, setSpotify, user }: any) => {
         if (event.url.startsWith(SPOTIFY_CONFIG.redirectUri)) {
           const urlParam = new URLSearchParams(new URL(event.url).search)
           const code = urlParam.get('code')!
+          console.log(code)
           setCode(code)
-          iab.close()
           exchangeCodeForAccessToken(code)
-            .then(() => next())
+            .then(() => {
+              iab.close()
+              next()
+            })
         }
       })
 
@@ -214,7 +217,7 @@ const ConnectPlayer = ({ next, playlist, uid }: any) => {
   useEffect(() => {
     let code = otp1 + otp2 + otp3 + otp4
     if (otp4 !== '' && code.length === 4) {
-      fetch(backend + '/session/claim?code=' + code)
+      fetch(backend + `/session/claim?code=${code}&playlistId=${playlist}&uid=${uid}`)
         .then(resp => resp.json())
         .then(resp => {
           if (!resp.success && errorRef.current) {

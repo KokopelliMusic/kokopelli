@@ -1,5 +1,4 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
-import { FirebaseAuthConsumer } from '@react-firebase/auth'
 import './Register.css'
 import firebase, { firebaseAuth } from '../../firebase'
 import { useState } from 'react'

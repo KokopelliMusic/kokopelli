@@ -42,6 +42,7 @@ import FirebaseAuthContext from './context/FirebaseAuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Playlists from './pages/home/Playlists'
 import NewPlaylist from './pages/home/NewPlaylist'
+import JoinSession from './pages/session/JoinSession'
 
 const App: React.FC = () => {
 
@@ -83,7 +84,7 @@ const App: React.FC = () => {
                 <StartSession />
               </ProtectedRoute>
               <ProtectedRoute redirectTo="/init" path="/joinsession">
-                TODO join session
+                <JoinSession />
               </ProtectedRoute>
               <ProtectedRoute redirectTo="/init" path="/home">
                 <Home />
@@ -94,7 +95,7 @@ const App: React.FC = () => {
               </Route>
               {/* Catch all else and redirect to home */}
               <Route>
-                <Redirect to="/init" />
+                <Redirect to="/home" />
               </Route>
             </IonRouterOutlet>
           </IonReactRouter>

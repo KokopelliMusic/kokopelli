@@ -11,8 +11,8 @@ const NewPlaylist = () => {
   const [name, setName] = useState('')
   const user = useContext(AuthContext)
   // const playlistRef = database.ref(`users/${user.user?.uid}/playlists`)
-  const playlistRef = database.ref('playlists')
-  const userPlaylistRef = database.ref(`users/${user.user?.uid}/playlists`)
+  const playlistRef = database.ref('/playlists')
+  const userPlaylistRef = database.ref(`/users/${user.user?.uid}/playlists`)
 
   const click = () => {
     if (name.length === 0) {

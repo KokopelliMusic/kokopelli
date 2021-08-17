@@ -3,7 +3,7 @@ import { arrowBack, reload } from 'ionicons/icons'
 import React from 'react'
 import { AuthContext } from '../../context/FirebaseAuthContext'
 import { addSong } from '../../storage/playlist'
-import { getSession } from '../../storage/user'
+import { getSession, getUser } from '../../storage/user'
 import './Spotify.css'
 
 type SpotifySearchSong = {
@@ -19,7 +19,8 @@ export default class Spotify extends React.Component {
 
   state = {
     results: [],
-    playlist: ''
+    playlist: '',
+    username: ''
   }
 
   static contextType = AuthContext
@@ -41,18 +42,30 @@ export default class Spotify extends React.Component {
           playlist: user.playlistId
         })
       })
+
+    getUser(this.context.user.uid)
+      .then(user => user.username)
+      .then(username => {
+        this.setState({
+          username
+        })
+      })
   }
 
   onResultClick = async (song: SpotifySearchSong) => {
     const { id, artist, title, cover, length } = song
     await addSong(this.context.user.uid, this.state.playlist, {
+      addedBy: this.state.username,
+      uid: this.context.user.uid,
       id,
       artist,
       title,
       cover,
       length,
       type: 'spotify'
-    }).then(() => window.location.reload())
+    }).then(() => {
+      window.location.reload()
+    })
   }
 
   parseResults(res: any) {

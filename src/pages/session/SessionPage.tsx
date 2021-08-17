@@ -5,6 +5,7 @@ import { redirect } from '../../util'
 import {  getSession, getUser, Session, User } from '../../storage/user'
 import { getPlaylist, Playlist } from '../../storage/playlist'
 import './SessionPage.css'
+import { backend } from '../../config.json'
 import { AuthContext } from '../../context/FirebaseAuthContext'
 
 const SessionPage = () => {
@@ -17,23 +18,36 @@ const SessionPage = () => {
   const [userLen, setUserLen] = useState(0)
 
   useEffect(() => {
-    const uid = authContext.user!.uid
-    getUser(uid).then(setUser)
-    getSession(uid)
-      .then(setSession)
-      .then(() => {
-        getPlaylist(session?.playlistId!)
-          .then(setPlaylist)
-      })
-      .then(() => {
-        if (playlist?.songs) {
-          setSongsLen(Object.entries(playlist.songs).length | 0)
-        }
-        if (playlist?.users) {
-          setUserLen(Object.entries(playlist.users).length | 0)
-        }
-      })
-  }, [authContext.user, session ,playlist?.songs, playlist?.users])
+    const fun = async () => {
+      const uid = authContext.user!.uid
+
+      const u = await getUser(uid)
+      console.log(u)
+      setUser(u)
+      await getSession(uid)
+        .then(async ses => {
+          setSession(ses)
+          setPlaylist(await getPlaylist(ses.playlistId!))
+
+          await fetch(`${backend}/playlist/number-of-songs?playlistId=${ses.playlistId}`)
+            .then(resp => resp.json())
+            .then(resp => setSongsLen(resp.songs))
+
+          if (playlist?.users) {
+            setUserLen(Object.entries(playlist.users).length | 0)
+          }
+        })
+
+    }
+
+    fun()
+  }, [])
+
+  useEffect(() => {
+    if (playlist?.users) {
+      setUserLen(Object.entries(playlist.users).length | 0)
+    }
+  }, [playlist])
 
   const currentSong = 'https://cdn.nierot.com/memes/missing.jpg'
   const songTitle = 'Song title'

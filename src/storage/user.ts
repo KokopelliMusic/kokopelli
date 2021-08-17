@@ -73,5 +73,5 @@ export const setSession = ({ sessionId, playlistId }: Session, uid: string): Pro
 }
 
 export const getRef = (uid: string, path: string) => {
-  return database.ref(`users/${uid}/${path}`)
+  return database.ref(`/users/${uid}/${path}`)
 }
