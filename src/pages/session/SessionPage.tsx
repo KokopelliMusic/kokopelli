@@ -3,10 +3,11 @@ import { musicalNotes, barcode, pricetag, people, logoYoutube } from 'ionicons/i
 import React, { useState, useEffect, useContext } from 'react'
 import { redirect } from '../../util'
 import {  getSession, getUser, Session, User } from '../../storage/user'
-import { getPlaylist, Playlist } from '../../storage/playlist'
+import { getPlaylist, listenForCurrentSong, Playlist } from '../../storage/playlist'
 import './SessionPage.css'
 import { backend } from '../../config.json'
 import { AuthContext } from '../../context/FirebaseAuthContext'
+import { database } from '../../firebase'
 
 const SessionPage = () => {
 
@@ -16,13 +17,18 @@ const SessionPage = () => {
   const [playlist, setPlaylist] = useState<Playlist>()
   const [songsLen, setSongsLen] = useState(0)
   const [userLen, setUserLen] = useState(0)
+  const [songCover, setSongCover] = useState('https://cdn.nierot.com/memes/missing.jpg')
+  const [songTitle, setSongTitle] = useState('Song title')
+  const [songArtist, setSongArtist] = useState('Artist')
+
 
   useEffect(() => {
+    let cleanupSong: any
+
     const fun = async () => {
       const uid = authContext.user!.uid
 
       const u = await getUser(uid)
-      console.log(u)
       setUser(u)
       await getSession(uid)
         .then(async ses => {
@@ -36,22 +42,30 @@ const SessionPage = () => {
           if (playlist?.users) {
             setUserLen(Object.entries(playlist.users).length | 0)
           }
+
+          cleanupSong = listenForCurrentSong(ses.sessionId, (title, artist, cover) => {
+            setSongArtist(artist)
+            setSongTitle(title)
+            setSongCover(cover)
+          })
+      
         })
 
     }
-
     fun()
+
+    return () => {
+      if (cleanupSong) cleanupSong.off()
+    }
+
   }, [])
+
 
   useEffect(() => {
     if (playlist?.users) {
       setUserLen(Object.entries(playlist.users).length | 0)
     }
   }, [playlist])
-
-  const currentSong = 'https://cdn.nierot.com/memes/missing.jpg'
-  const songTitle = 'Song title'
-  const artist = 'Artist'
 
   return <IonPage>
     <IonContent>
@@ -120,14 +134,14 @@ const SessionPage = () => {
 
         <div id="player">
           <div className="center">
-            <img src={currentSong} alt="Img"/>
+            <img src={songCover} alt="Img"/>
           </div>
           <div id="artist">
             <span id="title">
               {songTitle} 
             </span>
             <span id="artist">
-              {artist}
+              {songArtist}
             </span>
           </div>
         </div>

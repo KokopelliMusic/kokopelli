@@ -64,6 +64,26 @@ export const addUser = (uid: string, playlistId: string) => {
     .set(uid)
 }
 
+export const listenForCurrentSong = (sessionCode: string, callback: (title: string, artist: string, cover: string) => void) => {
+  const path = '/currently-playing/' + sessionCode.toUpperCase()
+
+  console.log(path)
+
+  database
+    .ref(path)
+    .on('value', snap => {
+      const song = snap.val()
+
+      console.log(song)
+
+      if (!song) return
+
+      callback(song.title, song.artist, song.cover)
+    })
+
+  return database.ref(path)
+}
+
 // export const getSongsPerUser = (playlistId: string) => {
 //   const users = database
 //     .ref('/playlists/' + playlistId + '/users')
@@ -141,7 +161,7 @@ export const checkSessionCode = async (code: string): Promise<boolean> => {
     .ref('/sessions/' + code.toUpperCase())
     .get()
     .then(resp => resp.val())
-    .then(resp => resp !== undefined)
+    .then(resp => !!resp)
 }
 
 export const getPlaylistFromSession = async (code: string): Promise<string> => {

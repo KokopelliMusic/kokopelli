@@ -21,8 +21,11 @@ const JoinSession = () => {
     if (otp4 !== '' && code.length === 4) {
       checkSessionCode(code)
         .then(exists => {
-          if (!exists && errorRef.current) {
-            errorRef.current.innerText = 'Code does not exist' 
+          console.log(exists)
+          if (!exists) {
+            if (errorRef.current) {
+              errorRef.current.innerText = 'Code does not exist' 
+            }
           } else {
             getPlaylistFromSession(code)
               .then(playlistId => setSession({ sessionId: code, playlistId }, auth.user!.uid))
