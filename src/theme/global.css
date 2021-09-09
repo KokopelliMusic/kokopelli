@@ -72,6 +72,10 @@ a {
     height: 100vh;
 }
 
+.fill {
+    height: 100%;
+}
+
 .fullscreen-ns {
     width: 100vw;
     height: 100vh;
@@ -148,4 +152,8 @@ a {
 
 .uppercase {
     text-transform: uppercase;
+}
+
+.overflow-hidden {
+    overflow: hidden;
 }

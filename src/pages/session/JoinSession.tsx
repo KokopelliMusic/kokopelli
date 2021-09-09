@@ -1,11 +1,12 @@
-import { IonContent, IonPage } from '@ionic/react'
+import { IonContent, IonIcon, IonPage } from '@ionic/react'
+import { arrowBack } from 'ionicons/icons'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { webplayerUri, backend } from '../../config.json'
 import { AuthContext } from '../../context/FirebaseAuthContext'
 import { checkSessionCode, getPlaylistFromSession } from '../../storage/playlist'
 import { setSession } from '../../storage/user'
 import { redirect } from '../../util'
-
+import './StartSession.css'
 
 const JoinSession = () => {
 
@@ -53,18 +54,29 @@ const JoinSession = () => {
   
   return <IonPage>
     <IonContent>
-      <h1>Connect</h1>
-      <p>Fill in the code that is in the top left corner of the player</p>
+      <div className="fullscreen background">
+        <div className="header">
+          <a href={'/home'} className="back">
+            <IonIcon icon={arrowBack} className="back-icon"/>
+            <span>Back</span>
+          </a>
+        </div>
+        <div id="connect" className="text-center">
 
-      <p ref={errorRef} className="text-error"/>
+          <h1>Connect</h1>
+          <p>Fill in the code that is in the top left corner of the player</p>
 
-      <div id="otp">
-        <form>
-          <OTPInputField name="1" value={otp1} setValue={setOtp1} inputFocus={inputFocus}/>
-          <OTPInputField name="2" value={otp2} setValue={setOtp2} inputFocus={inputFocus}/>
-          <OTPInputField name="3" value={otp3} setValue={setOtp3} inputFocus={inputFocus}/>
-          <OTPInputField name="4" value={otp4} setValue={setOtp4} inputFocus={inputFocus}/>
-        </form>
+          <p ref={errorRef} className="text-error"/>
+
+          <div id="otp">
+            <form>
+              <OTPInputField name="1" value={otp1} setValue={setOtp1} inputFocus={inputFocus}/>
+              <OTPInputField name="2" value={otp2} setValue={setOtp2} inputFocus={inputFocus}/>
+              <OTPInputField name="3" value={otp3} setValue={setOtp3} inputFocus={inputFocus}/>
+              <OTPInputField name="4" value={otp4} setValue={setOtp4} inputFocus={inputFocus}/>
+            </form>
+          </div>
+        </div>
       </div>
     </IonContent>
   </IonPage>
