@@ -10,31 +10,39 @@ export type Playlist = {
   users?: {}
 }
 
+export enum SongType {
+  YouTube = 'youtube',
+  Spotify = 'spotify'
+}
+
 type Song = {
   addedBy: string
   id: string
-  type: string
   title: string
-  artist: string
   uid: string
+  artist: string
 }
 
 export type SpotifySong = Song & {
-  type: 'spotify'
+  type: SongType.Spotify
   length: number
   cover: string
 }
 
-export const addSong = async (uid: string, playlistId: string, song: SpotifySong) => {
+export type YoutubeSong = Song & {
+  type: SongType.YouTube
+}
+
+export const addSong = async (uid: string, playlistId: string, song: SpotifySong | YoutubeSong) => {
   const userExits = await containsUser(uid, playlistId)
 
   // @ts-expect-error
   song.playlistId = playlistId
   // @ts-expect-error
-  song.spotifyId = song.id
+  song.platformId = song.id
 
   const add = async () => {
-    await fetch(`${backend}/playlist/add/spotify`, {
+    await fetch(`${backend}/playlist/add/${song.type}`, {
       method: 'POST',
       body: JSON.stringify(song),
       headers: {

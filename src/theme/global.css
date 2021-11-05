@@ -67,6 +67,10 @@ a {
     background-color: #A239EA;
 }
 
+.error {
+    color: red;
+}
+
 .fullscreen {
     width: 100vw;
     height: 100vh;
