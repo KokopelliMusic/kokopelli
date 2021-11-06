@@ -2,7 +2,7 @@ import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack, reload } from 'ionicons/icons'
 import React from 'react'
 import { AuthContext } from '../../context/FirebaseAuthContext'
-import { addSong } from '../../storage/playlist'
+import { addSong, SongType } from '../../storage/playlist'
 import { getSession, getUser } from '../../storage/user'
 import './Spotify.css'
 
@@ -62,7 +62,7 @@ export default class Spotify extends React.Component {
       title,
       cover,
       length,
-      type: 'spotify'
+      type: SongType.Spotify
     }).then(() => {
       window.location.reload()
     })

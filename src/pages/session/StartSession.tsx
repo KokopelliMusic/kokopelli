@@ -116,7 +116,7 @@ const LogIntoSpotify = ({ next, setSpotify, user }: any) => {
         if (event.url.startsWith(SPOTIFY_CONFIG.redirectUri)) {
           const urlParam = new URLSearchParams(new URL(event.url).search)
           const code = urlParam.get('code')!
-          console.log(code)
+          console.log(code) 
           setCode(code)
           exchangeCodeForAccessToken(code)
             .then(() => {

@@ -43,6 +43,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Playlists from './pages/home/Playlists'
 import NewPlaylist from './pages/home/NewPlaylist'
 import JoinSession from './pages/session/JoinSession'
+import YouTube from './pages/add/YouTube'
 
 const App: React.FC = () => {
 
@@ -56,7 +57,7 @@ const App: React.FC = () => {
                 <Spotify />
               </ProtectedRoute>
               <ProtectedRoute redirectTo="/init" path="/add/youtube">
-                TODO YouTube
+                <YouTube />
               </ProtectedRoute>
               <ProtectedRoute redirectTo="/init" path="/add/mp3">
                 TODO MP3

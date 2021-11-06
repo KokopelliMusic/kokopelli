@@ -28,6 +28,7 @@
     "@types/react-router-dom": "^5.1.7",
     "cordova-plugin-inappbrowser": "^5.0.0",
     "firebase": "^8.8.0",
+    "ionic": "^5.4.16",
     "ionicons": "^5.4.0",
     "otp-input-react": "^0.2.4",
     "react": "^17.0.1",
