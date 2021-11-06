@@ -95,6 +95,14 @@ const YouTube = () => {
     }
   }
 
+  const selectBestThumbnail = () => {
+    // @ts-expect-error
+    const thumbs = video!.raw.snippet.thumbnails
+    const len = Object.keys(thumbs).length
+    // @ts-expect-error
+    return video!.raw.snippet.thumbnails[Object.keys(thumbs)[len - 1]].url
+  }
+
   return <IonPage>
     <IonContent>
       <div className="background fullscreen">
@@ -139,7 +147,7 @@ const YouTube = () => {
               <p>{video!.channel.title}</p>
               <div className="">
                 {/* @ts-ignore */}
-                <img src={video!.raw.snippet.thumbnails.standard.url} alt=""/>
+                <img src={selectBestThumbnail()} alt=""/>
               </div>
 
               <IonButton onClick={addVideo}>
@@ -148,9 +156,11 @@ const YouTube = () => {
             </div>
           }
           </div> : 
-          <IonButton className="center" onClick={check}>
-            Check link
-          </IonButton>
+          <div className="center">
+            <IonButton className="" onClick={check}>
+              Check link
+            </IonButton>
+          </div>
           }
       </div>
 
