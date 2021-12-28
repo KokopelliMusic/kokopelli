@@ -1,5 +1,4 @@
-import { IonButton, IonContent, IonImg, IonPage, IonRouterLink } from '@ionic/react'
-import { FirebaseAuthConsumer, IfFirebaseAuthed } from '@react-firebase/auth'
+import { IonButton, IonContent, IonImg, IonPage } from '@ionic/react'
 import './Init.css'
 
 const Init: React.FC = () => {
@@ -23,10 +22,6 @@ const Init: React.FC = () => {
           <IonButton className="width-90" href="/init/register">Create a new account</IonButton>
         </div>
         
-        <div className="init-row center">
-          <IonButton className="width-90" href="/init/guest">Continue as Guest</IonButton>
-        </div>
-
         <div className="init-row center">
           <span>
             Already have an account? <a href="/init/signin">Sign in</a>
