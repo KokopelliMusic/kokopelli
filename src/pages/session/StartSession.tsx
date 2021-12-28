@@ -1,15 +1,11 @@
 import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, isPlatform } from '@ionic/react'
-import { arrowBack, create } from 'ionicons/icons';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { arrowBack } from 'ionicons/icons';
+import { useEffect, useRef, useState } from 'react';
 import { Redirect } from 'react-router';
-import { AuthContext } from '../../context/FirebaseAuthContext';
-import { database } from '../../firebase';
 import { SPOTIFY_CONFIG, webplayerUri, backend } from '../../config.json'
 import './StartSession.css'
 import { getQueryParam, redirect } from '../../util'
 import { InAppBrowser } from '@ionic-native/in-app-browser'
-import { setSession } from '../../storage/user'
-import { getPlaylists } from '../../storage/playlist';
 
 const StartSession = () => {
 
@@ -17,7 +13,6 @@ const StartSession = () => {
   const [playlists, setPlaylists] = useState<Object[]>([])
   const [playlist, setPlaylist] = useState<string>('')
   const [spotify, setSpotify] = useState({ access: undefined, refresh: undefined, date: new Date() })
-  const user = useContext(AuthContext)
 
   const next = () => {
     setStage(stage + 1)
@@ -116,7 +111,6 @@ const LogIntoSpotify = ({ next, setSpotify, user }: any) => {
         if (event.url.startsWith(SPOTIFY_CONFIG.redirectUri)) {
           const urlParam = new URLSearchParams(new URL(event.url).search)
           const code = urlParam.get('code')!
-          console.log(code) 
           setCode(code)
           exchangeCodeForAccessToken(code)
             .then(() => {
