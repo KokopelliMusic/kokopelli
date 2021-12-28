@@ -2,11 +2,32 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
+import { useEffect, useState } from 'react'
+import { Sipapu } from 'sipapu'
+import { Session } from '@supabase/gotrue-js';
+
+window.sipapu = new Sipapu()
+
+const SipapuContext = React.createContext<Session | null>(null)
+
+const SipapuClient = () => {
+  const [session, setSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    setSession(window.sipapu.client.auth.session())
+
+    window.sipapu.client.auth.onAuthStateChange((_event, session) => setSession(session))
+  }, [])
+
+  return <SipapuContext.Provider value={session}>
+    <App />
+  </SipapuContext.Provider>
+}
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <SipapuClient />
   </React.StrictMode>,
   document.getElementById('root')
 )
