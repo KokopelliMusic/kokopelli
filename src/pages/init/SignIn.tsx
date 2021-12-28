@@ -1,9 +1,6 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
-import firebase from 'firebase'
 import { arrowBack } from 'ionicons/icons'
 import { useState } from 'react'
-import { firebaseAuth } from '../../firebase'
-import { login } from '../../storage/user'
 import { redirect } from '../../util'
 import './SignIn.css'
 
@@ -13,24 +10,18 @@ const SignIn: React.FC = () => {
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
 
-  const register = () => {
+  const register = async () => {
     if (email.length === 0 || password.length === 0) {
       return alert('Please fill in both forms')
     }
-    firebaseAuth
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => firebaseAuth.signInWithEmailAndPassword(email, password))
-      .then(async userCredential => {
-        await login({
-          username,
-          uid: userCredential.user?.uid,
-          isGuest: false
-        }).then(() => redirect('/home'))
-      })
-      .catch(err => {
-        alert(err)
-        console.error(err)
-      })
+    try {
+      await window.sipapu.signIn(email, password)
+    } catch (error: any) {
+      //TODO
+      alert(error.message)
+    } finally {
+      redirect('/home')
+    }
   }
 
   return <IonPage>
