@@ -29,82 +29,57 @@ import './theme/global.css'
 import SignIn from './pages/init/SignIn'
 import SessionPage from './pages/session/SessionPage'
 import Register from './pages/init/Register'
-import Guest from './pages/init/Guest'
 import Init from './pages/init/Init'
 import Spotify from './pages/add/Spotify'
 import Home from './pages/home/Home'
 import StartSession from './pages/session/StartSession'
 
-import { FirebaseAuthProvider } from '@react-firebase/auth'
-import firebase from './firebase'
-import { FIREBASE_CONFIG } from './config.json'
-import FirebaseAuthContext from './context/FirebaseAuthContext'
-import ProtectedRoute from './components/ProtectedRoute'
 import Playlists from './pages/home/Playlists'
 import NewPlaylist from './pages/home/NewPlaylist'
 import JoinSession from './pages/session/JoinSession'
 import YouTube from './pages/add/YouTube'
+import KokopelliRoute from './components/KokopelliRoute'
 
 const App: React.FC = () => {
 
-  return (
-    <FirebaseAuthProvider firebase={firebase} {...FIREBASE_CONFIG}>
-      <FirebaseAuthContext>
-        <IonApp>
-          <IonReactRouter>
-            <IonRouterOutlet animated>
-              <ProtectedRoute redirectTo="/init" path="/add/spotify">
-                <Spotify />
-              </ProtectedRoute>
-              <ProtectedRoute redirectTo="/init" path="/add/youtube">
-                <YouTube />
-              </ProtectedRoute>
-              <ProtectedRoute redirectTo="/init" path="/add/mp3">
-                TODO MP3
-              </ProtectedRoute>
-              <Route exact path="/init/guest">
-                <Guest />
-              </Route>
-              <Route exact path="/init/register">
-                <Register />
-              </Route>
-              <Route exact path="/init/signin">
-                <SignIn />
-              </Route>
-              <ProtectedRoute redirectTo="/init" path="/session">
-                <SessionPage />
-              </ProtectedRoute>
-              
-              <ProtectedRoute redirectTo="/init" path="/playlists">
-                <Playlists />
-              </ProtectedRoute>
-              <ProtectedRoute redirectTo="/init" path="/newplaylist">
-                <NewPlaylist />
-              </ProtectedRoute>
-              <ProtectedRoute redirectTo="/init" path="/newsession">
-                <StartSession />
-              </ProtectedRoute>
-              <ProtectedRoute redirectTo="/init" path="/joinsession">
-                <JoinSession />
-              </ProtectedRoute>
-              <ProtectedRoute redirectTo="/init" path="/home">
-                <Home />
-              </ProtectedRoute>
+  if (window.sipapu.isLoggedIn()) {
+    return <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet animated>
+            <KokopelliRoute path="/add/spotify" component={Spotify} />
+            <KokopelliRoute path="/add/youtube" component={YouTube} />
+            <KokopelliRoute path="/init/register" component={Register} />
+            <KokopelliRoute path="/init/signin" component={SignIn} />
+            <KokopelliRoute path="/session" component={SessionPage} />
+            <KokopelliRoute path="/playlists" component={Playlists} />
+            <KokopelliRoute path="/newplaylist" component={NewPlaylist} />
+            <KokopelliRoute path="/joinsession" component={JoinSession} />
+            <KokopelliRoute path="/newsession" component={StartSession} />
+            <KokopelliRoute path="/home" component={Home} />
+            <KokopelliRoute path="/init" component={Init} />
 
-              <Route exact path="/init">
-                <Init />
-              </Route>
-              {/* Catch all else and redirect to home */}
-              <Route>
-                <Redirect to="/home" />
-              </Route>
-            </IonRouterOutlet>
-          </IonReactRouter>
-        </IonApp>
-      </FirebaseAuthContext>
-    </FirebaseAuthProvider>
+            <Route>
+              <Redirect to="/home" />
+            </Route>
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
+  } else {
+    return <IonApp>
+      <IonReactRouter>
+        <IonRouterOutlet animated>
+          <KokopelliRoute path="/home" component={Home} />
+          <KokopelliRoute path="/init" component={Init} />
+          <KokopelliRoute path="/init/register" component={Register} />
+          <KokopelliRoute path="/init/signin" component={SignIn} />
 
-  )
+          <Route>
+            <Redirect to="/home" />
+          </Route>
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  }
 }
 
 export default App
