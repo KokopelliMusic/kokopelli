@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { Sipapu } from 'sipapu'
 import { Session } from '@supabase/gotrue-js';
 
-window.sipapu = new Sipapu()
+window.sipapu = new Sipapu('kokopelli')
 
 const SipapuContext = React.createContext<Session | null>(null)
 
