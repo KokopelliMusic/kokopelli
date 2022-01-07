@@ -1,22 +1,23 @@
-import { IonAvatar, IonContent, IonItem, IonLabel, IonList, IonNav, IonPage } from '@ionic/react'
-import { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import { getUser } from '../../storage/user'
+import { IonContent, IonPage } from '@ionic/react'
+import { useEffect, useState } from 'react'
 import './Home.css'
 
 const Home = () => {
 
   const [username, setUsername] = useState('Loading')
-  const user = useContext(AuthContext)
 
   useEffect(() => {
     const fun = async () => {
-      await getUser(user.user?.uid!)
-        .then(user => setUsername(user.username))
+      await window.sipapu.getUsername()
+        .then(u => setUsername(u))
+        .catch(err => {
+          console.error(err)
+          alert('Something went wrong, try reloading')
+        })
     }
 
     fun()
-  }, [user])
+  }, [])
 
   return <IonPage>
     <IonContent>
