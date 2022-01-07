@@ -1,10 +1,6 @@
 import { IonContent, IonIcon, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
-import { useContext, useEffect, useRef, useState } from 'react'
-import { webplayerUri, backend } from '../../config.json'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import { checkSessionCode, getPlaylistFromSession } from '../../storage/playlist'
-import { setSession } from '../../storage/user'
+import { useEffect, useRef, useState } from 'react'
 import { redirect } from '../../util'
 import './StartSession.css'
 
@@ -15,26 +11,29 @@ const JoinSession = () => {
   const [otp3, setOtp3] = useState('')
   const [otp4, setOtp4] = useState('')
   const errorRef = useRef<HTMLParagraphElement>(null)
-  const auth = useContext(AuthContext)
 
   useEffect(() => {
     let code = (otp1 + otp2 + otp3 + otp4).toUpperCase()
     if (otp4 !== '' && code.length === 4) {
-      checkSessionCode(code)
-        .then(exists => {
-          console.log(exists)
-          if (!exists) {
+      window.sipapu.Session.get(code)
+        .then(session => {
+          if (!session) {
             if (errorRef.current) {
-              errorRef.current.innerText = 'Code does not exist' 
+              errorRef.current.innerText = 'Code does not exist'
             }
           } else {
-            getPlaylistFromSession(code)
-              .then(playlistId => setSession({ sessionId: code, playlistId }, auth.user!.uid))
-              .then(() => redirect('/session'))
+            window.sipapu.Session.setSessionId(code)
+            redirect('/session')
           }
         })
+        .catch(err => {
+          if (errorRef.current) {
+            errorRef.current.innerText = err.message
+          }
+        })
+
     }
-  }, [otp1, otp2, otp3, otp4, auth.user])
+  }, [otp1, otp2, otp3, otp4])
 
   const inputFocus = (e: any) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
