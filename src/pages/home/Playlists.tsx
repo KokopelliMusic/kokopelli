@@ -1,30 +1,32 @@
 import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage } from '@ionic/react'
 import { useState, useEffect, useContext } from 'react'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import firebase from 'firebase'
 import './Playlists.css'
 import { arrowBack } from 'ionicons/icons'
 import { redirect } from '../../util'
-import { getPlaylists } from '../../storage/playlist'
+import { PlaylistType } from 'sipapu/src/services/playlist'
 
 const Playlists = () => {
 
-  const [playlists, setPlaylists] = useState<any[]>([])
-  const user = useContext(AuthContext)
+  const [playlists, setPlaylists] = useState<PlaylistType[]>([])
 
   useEffect(() => {
-    (async () => setPlaylists(await getPlaylists(user.user!.uid)))()
-  }, [user.user])
+    (async () => {
+      const playlists = await window.sipapu.Playlist.getAllFromUser()
+      setPlaylists(playlists)
+    })()
+  }, [])
+
+  const parseDate = (date: Date) => `${date.getDay()}/${date.getMonth() + 1}/${date.getFullYear()}`
   
   const generateList = () => {
     return <IonList color="none">
-      { playlists.map(a => <IonItem key={a.dateCreated}>
+      { playlists.map(a => <IonItem key={parseDate(a.createdAt)}>
           <IonButton slot="end" onClick={() => alert('TODO')}>
             View
           </IonButton>
           <IonLabel>
             <h2>{a.name}</h2>
-            <h3>{new Date(a.dateCreated).toLocaleString('nl')}</h3>
+            <h3>{parseDate(a.createdAt)}</h3>
           </IonLabel>
         </IonItem>)}
     </IonList>
