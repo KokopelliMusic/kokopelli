@@ -3,7 +3,6 @@ import './Register.css'
 import { useState } from 'react'
 import { redirect } from '../../util'
 import { arrowBack } from 'ionicons/icons'
-import { login } from '../../storage/user'
 
 const Register: React.FC = () => {
 
