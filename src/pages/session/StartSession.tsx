@@ -1,17 +1,19 @@
 import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, isPlatform } from '@ionic/react'
-import { arrowBack } from 'ionicons/icons';
-import { useEffect, useRef, useState } from 'react';
-import { Redirect } from 'react-router';
-import { SPOTIFY_CONFIG, webplayerUri, backend } from '../../config.json'
+import { arrowBack } from 'ionicons/icons'
+import { useEffect, useRef, useState } from 'react'
+import { Redirect } from 'react-router'
+import { SPOTIFY_CONFIG, webplayerUri } from '../../config.json'
 import './StartSession.css'
 import { getQueryParam, redirect } from '../../util'
 import { InAppBrowser } from '@ionic-native/in-app-browser'
+import { SpotifyCreateType } from 'sipapu/src/services/spotify'
+import { PlaylistType } from 'sipapu/src/services/playlist'
 
 const StartSession = () => {
 
   const [stage, setStage] = useState(0)
-  const [playlists, setPlaylists] = useState<Object[]>([])
-  const [playlist, setPlaylist] = useState<string>('')
+  const [playlists, setPlaylists] = useState<PlaylistType[]>([])
+  const [playlist, setPlaylist] = useState<number>(0)
   const [spotify, setSpotify] = useState({ access: undefined, refresh: undefined, date: new Date() })
 
   const next = () => {
@@ -19,15 +21,15 @@ const StartSession = () => {
   }
 
   const stages = [
-    <LogIntoSpotify next={next} user={user} setSpotify={setSpotify}/>,
+    <LogIntoSpotify next={next} setSpotify={setSpotify}/>,
     <SelectPlaylist next={next} playlists={playlists} setPlaylist={setPlaylist}/>,
-    <ConnectPlayer next={next} playlist={playlist} uid={user.user!.uid}/>,
+    <ConnectPlayer playlist={playlist} />,
     <Redirect to="/session" />
   ]
 
   useEffect(() => {
     (async () => {
-      getPlaylists(user.user!.uid)
+      window.sipapu.Playlist.getAllFromUser()
         .then(setPlaylists)
         .catch(err => {
           console.error(err)
@@ -35,7 +37,7 @@ const StartSession = () => {
         })
     })()
 
-  }, [user])
+  }, [])
 
 
   return <IonPage>
@@ -53,11 +55,20 @@ const StartSession = () => {
   </IonPage>
 }
 
-const SelectPlaylist = ({ next, playlists, setPlaylist }: any) => {
+const SelectPlaylist = (props: any) => {
+  const playlists: PlaylistType[] = props.playlists
+  const { next, setPlaylist } = props
 
-  const click = (id: string) => {
+  const click = (id: number) => {
     setPlaylist(id)
     next()
+  }
+
+  const formatDate = (date: Date): string => {
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const year = date.getFullYear()
+    return `${day}/${month}/${year}`
   }
 
   return <div id="select">
@@ -66,10 +77,10 @@ const SelectPlaylist = ({ next, playlists, setPlaylist }: any) => {
     </h1>
     <div>
       <IonList>
-        { playlists.map((p: any) => <IonItem key={p.id}>
+        { playlists.map((p: PlaylistType) => <IonItem key={p.id}>
           <IonLabel>
             <h2>{p.name}</h2>
-            <h3>{p.dateCreated}</h3>
+            <h3>{formatDate(new Date(p.createdAt))}</h3>
           </IonLabel>
           <IonButton slot="end" onClick={() => click(p.id)}>
             Select
@@ -82,7 +93,7 @@ const SelectPlaylist = ({ next, playlists, setPlaylist }: any) => {
 
 
 
-const LogIntoSpotify = ({ next, setSpotify, user }: any) => {
+const LogIntoSpotify = ({ next, setSpotify }: any) => {
 
   const [code, setCode] = useState('')
 
@@ -147,17 +158,28 @@ const LogIntoSpotify = ({ next, setSpotify, user }: any) => {
 
       if (!data) return
 
-      data.dateSet = new Date()
-      const spotify = {
-        refresh: data.refresh_token,
-        access: data.access_token,
-        date: new Date()
+      // data.dateSet = new Date()
+      // const spotify = {
+      //   refresh: data.refresh_token,
+      //   access: data.access_token,
+      //   date: new Date()
+      // }
+
+      const ex = new Date()
+      ex.setSeconds(ex.getSeconds() + data.expires_in)
+
+      const spotify: SpotifyCreateType = {
+        refreshToken: data.refresh_token,
+        accessToken: data.access_token,
+        expiresAt: ex,
       }
 
-      database
-        .ref(`users/${user.user?.uid}/spotify`)
-        .set(spotify)
-        .then(() => setSpotify(spotify))
+      window.sipapu.Spotify.create(spotify)
+        .catch(err => {
+          // TODO 
+          console.error(err)
+          alert('Something went wrong, try reloading')
+        })
 
     })  
     .catch(error => {
@@ -200,7 +222,8 @@ const LogIntoSpotify = ({ next, setSpotify, user }: any) => {
   </div>
 }
 
-const ConnectPlayer = ({ next, playlist, uid }: any) => {
+const ConnectPlayer = (props: any) => {
+  const playlist: number = props.playlist
 
   const [otp1, setOtp1] = useState('')
   const [otp2, setOtp2] = useState('')
@@ -211,24 +234,18 @@ const ConnectPlayer = ({ next, playlist, uid }: any) => {
   useEffect(() => {
     let code = otp1 + otp2 + otp3 + otp4
     if (otp4 !== '' && code.length === 4) {
-      fetch(backend + `/session/claim?code=${code}&playlistId=${playlist}&uid=${uid}`)
-        .then(resp => resp.json())
-        .then(resp => {
-          if (!resp.success && errorRef.current) {
-            errorRef.current.innerText = 'Code does not exist'
-          } else {
-            setSession({
-              sessionId: code,
-              playlistId: playlist
-            }, uid).then(() => redirect('/session'))
-          }
+      window.sipapu.Session.claim(playlist, code)
+        .then(() => {
+          window.sipapu.Session.setSessionId(code)
+          redirect('/session')
         })
         .catch(err => {
           console.error(err)
-          alert('Something went wrong. Please try reloading')
+          // @ts-ignore
+          errorRef.current?.innerText = err.message
         })
       }
-  }, [otp1, otp2, otp3, otp4, playlist, uid])
+  }, [otp1, otp2, otp3, otp4, playlist])
 
   const inputFocus = (e: any) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
