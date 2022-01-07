@@ -1,9 +1,7 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
-import { arrowBack, reload } from 'ionicons/icons'
+import { arrowBack } from 'ionicons/icons'
 import React from 'react'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import { addSong, SongType } from '../../storage/playlist'
-import { getSession, getUser } from '../../storage/user'
+import { SongEnum, SpotifySongCreateType } from 'sipapu/src/services/song'
 import './Spotify.css'
 
 type SpotifySearchSong = {
@@ -12,6 +10,8 @@ type SpotifySearchSong = {
   cover: string
   length: number
   id: string
+  album: string
+  queryResult: any
   onClick: (song: SpotifySearchSong) => void
 }
 
@@ -19,11 +19,9 @@ export default class Spotify extends React.Component {
 
   state = {
     results: [],
-    playlist: '',
+    playlist: 0,
     username: ''
   }
-
-  static contextType = AuthContext
 
   onInput(e: React.FormEvent<HTMLIonInputElement>) {
     let search = e.currentTarget.value
@@ -36,36 +34,64 @@ export default class Spotify extends React.Component {
   }
 
   componentDidMount() {
-    getSession(this.context.user.uid)
-      .then(user => {
-        this.setState({
-          playlist: user.playlistId
-        })
+    window.sipapu.getUsername()
+      .then(u => this.setState({ username: u }))
+
+    window.sipapu.Session.get(window.sipapu.Session.sessionId!)
+      .then(session => window.sipapu.Playlist.get(session!.playlistId))
+      .then(playlist => this.setState({ playlist: playlist.id }))
+      .catch(err => {
+        console.error(err)
+        alert('Something went wrong, try reloading')
       })
 
-    getUser(this.context.user.uid)
-      .then(user => user.username)
-      .then(username => {
-        this.setState({
-          username
-        })
-      })
+    // getSession(this.context.user.uid)
+    //   .then(user => {
+    //     this.setState({
+    //       playlist: user.playlistId
+    //     })
+    //   })
+
+    // getUser(this.context.user.uid)
+    //   .then(user => user.username)
+    //   .then(username => {
+    //     this.setState({
+    //       username
+    //     })
+    //   })
   }
 
   onResultClick = async (song: SpotifySearchSong) => {
-    const { id, artist, title, cover, length } = song
-    await addSong(this.context.user.uid, this.state.playlist, {
-      addedBy: this.state.username,
-      uid: this.context.user.uid,
-      id,
-      artist,
-      title,
-      cover,
-      length,
-      type: SongType.Spotify
-    }).then(() => {
-      window.location.reload()
-    })
+    const create: SpotifySongCreateType = {
+      title: song.title,
+      platformId: song.id,
+      addedBy: await window.sipapu.getUsername(),
+      playlistId: this.state.playlist,
+      queryResult: song.queryResult,
+      artist: song.artist,
+      cover: song.cover,
+      length: song.length,
+      album: song.album,
+      songType: SongEnum.SPOTIFY
+    }
+    window.sipapu.Song.createSpotify(create)
+      .then(() => window.location.reload())
+      .catch(err => {
+        console.error(err)
+        alert('Something went wrong adding this song.')
+      })
+    // await addSong(this.context.user.uid, this.state.playlist, {
+    //   addedBy: this.state.username,
+    //   uid: this.context.user.uid,
+    //   id,
+    //   artist,
+    //   title,
+    //   cover,
+    //   length,
+    //   type: SongType.Spotify
+    // }).then(() => {
+    //   window.location.reload()
+    // })
   }
 
   parseResults(res: any) {
@@ -83,6 +109,8 @@ export default class Spotify extends React.Component {
       cover: item.album.images[0].url,
       length: item.duration_ms,
       id: item.id,
+      album: item.album.name,
+      queryResult: item,
       onClick: this.onResultClick
     }}/>) })
   }
