@@ -2,32 +2,25 @@ import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
 import './YouTube.css'
 import { youtubeApi } from '../../config.json'
-import React, { useContext, useEffect, useState } from 'react'
-import { addSong, SongType } from '../../storage/playlist'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import { getSession, getUser } from '../../storage/user'
+import React, { useEffect, useState } from 'react'
+import { SongEnum } from 'sipapu/src/services/song'
 
 const YouTube = () => {
 
   const [link, setLink] = useState('')
-  const [video, setVideo] = useState(null)
+  const [video, setVideo] = useState<any>()
   const [error, setError] = useState('')
   const [username, setUsername] = useState('Username')
-  const [playlist, setPlaylist] = useState('')
-  
-  const context = useContext(AuthContext)
+  const [playlist, setPlaylist] = useState(0)
 
   useEffect(() => {
-    getSession(context.user!.uid)
-      .then(user => {
-        setPlaylist(user.playlistId)
-      })
+    window.sipapu.getUsername()
+      .then(u => setUsername(u))
 
-    getUser(context.user!.uid)
-      .then(user => user.username)
-      .then(username => {
-        setUsername(username)
-      })
+    window.sipapu.Session.get(window.sipapu.Session.sessionId!)
+      .then(session => window.sipapu.Playlist.get(session!.playlistId))
+      .then(playlist => setPlaylist(playlist.id))
+      .catch(err => setError(err.message))
   })
 
   const splitIdFromYoutubeLink = () => {
@@ -50,11 +43,9 @@ const YouTube = () => {
       .then(res => res.json())
       .then(video => {
         setVideo(video)
-        console.log(video)
       })
       .catch(err => {
         setError(err)
-        console.error(err)
       })
   }
 
@@ -74,33 +65,44 @@ const YouTube = () => {
   }
 
   const addVideo = async () => {
-    if (!video || video === null) {
+    if (!video) {
       setError('No video')
     } else {
-      await addSong(context.user!.uid, playlist, { 
-        // @ts-expect-error
-        title: video.title, 
-        // @ts-expect-error
-        artist: video.channel.title, 
-        // @ts-expect-error
-        id: video.id,
-        uid: context.user!.uid,
+      await window.sipapu.Song.createYoutube({
+        title: video.title,
+        platformId: video.id,
         addedBy: username,
-        type: SongType.YouTube
-      }).then(() => {
+        playlistId: playlist,
+        queryResult: video.queryResult,
+        songType: SongEnum.YOUTUBE
+      })
+      .then(() => {
         setLink('')
         setVideo(null)
         setError('')
       })
+      // await addSong(context.user!.uid, playlist, { 
+      //   // @ts-expect-error
+      //   title: video.title, 
+      //   // @ts-expect-error
+      //   artist: video.channel.title, 
+      //   // @ts-expect-error
+      //   id: video.id,
+      //   uid: context.user!.uid,
+      //   addedBy: username,
+      //   type: SongType.YouTube
+      // }).then(() => {
+      //   setLink('')
+      //   setVideo(null)
+      //   setError('')
+      // })
     }
   }
 
   const selectBestThumbnail = () => {
-    // @ts-expect-error
-    const thumbs = video!.raw.snippet.thumbnails
+    const thumbs = video.raw.snippet.thumbnails
     const len = Object.keys(thumbs).length
-    // @ts-expect-error
-    return video!.raw.snippet.thumbnails[Object.keys(thumbs)[len - 1]].url
+    return video.raw.snippet.thumbnails[Object.keys(thumbs)[len - 1]].url
   }
 
   return <IonPage>
