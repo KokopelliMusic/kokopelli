@@ -1,71 +1,94 @@
-import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/react'
-import { musicalNotes, barcode, pricetag, people, logoYoutube } from 'ionicons/icons'
-import React, { useState, useEffect, useContext } from 'react'
+import { IonContent, IonIcon, IonPage } from '@ionic/react'
+import { musicalNotes, barcode, pricetag, people } from 'ionicons/icons'
+import { useState, useEffect } from 'react'
 import { redirect } from '../../util'
-import {  getSession, getUser, Session, User } from '../../storage/user'
-import { getPlaylist, listenForCurrentSong, Playlist } from '../../storage/playlist'
 import './SessionPage.css'
-import { backend } from '../../config.json'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import { database } from '../../firebase'
+import { EventTypes, NextSongEventData } from 'sipapu/src/events'
+import { PlaylistType } from 'sipapu/src/services/playlist'
+import { SessionType } from 'sipapu/src/services/session'
 
 const SessionPage = () => {
 
-  const authContext = useContext(AuthContext)
-  const [user, setUser] = useState<User>()
-  const [session, setSession] = useState<Session>()
-  const [playlist, setPlaylist] = useState<Playlist>()
   const [songsLen, setSongsLen] = useState(0)
   const [userLen, setUserLen] = useState(0)
   const [songCover, setSongCover] = useState('https://cdn.nierot.com/memes/missing.jpg')
   const [songTitle, setSongTitle] = useState('Song title')
   const [songArtist, setSongArtist] = useState('Artist')
-
+  const [username, setUsername] = useState('Username')
+  const [playlist, setPlaylist] = useState<PlaylistType>()
+  const [session, setSession] = useState<SessionType>()
 
   useEffect(() => {
-    let cleanupSong: any
-
     const fun = async () => {
-      const uid = authContext.user!.uid
-
-      const u = await getUser(uid)
-      setUser(u)
-      await getSession(uid)
-        .then(async ses => {
-          setSession(ses)
-          setPlaylist(await getPlaylist(ses.playlistId!))
-
-          await fetch(`${backend}/playlist/number-of-songs?playlistId=${ses.playlistId}`)
-            .then(resp => resp.json())
-            .then(resp => setSongsLen(resp.songs))
-
-          if (playlist?.users) {
-            setUserLen(Object.entries(playlist.users).length | 0)
-          }
-
-          cleanupSong = listenForCurrentSong(ses.sessionId, (title, artist, cover) => {
-            setSongArtist(artist)
-            setSongTitle(title)
-            setSongCover(cover)
-          })
-      
+      await window.sipapu.getUsername()
+        .then(u => setUsername(u))
+        .catch(err => {
+          alert('Cannot find username. Please login again.')
+          redirect('/login')
         })
+
+      const session = await window.sipapu.Session.get(window.sipapu.Session.sessionId!)
+      .catch(err => {
+        alert('Session not found, returning to home. Error: ' + err.message)
+        redirect('/')
+      })
+
+      if (session === undefined) {
+        // TODO error handling
+        alert('Session not found, returning to home')
+        redirect('/')
+      }
+
+      setSession(session!)
+
+      await window.sipapu.Playlist.get(session!.playlistId)
+        .then(async playlist => {
+          setPlaylist(playlist)
+          setSongsLen(await window.sipapu.Playlist.getNumberOfSongs(playlist.id))
+          setUserLen(await window.sipapu.Playlist.getNumberOfUsers(playlist.id))
+        })
+      
+      window.sipapu.Session.watch(session!.id, event => {
+        if (event.eventType === EventTypes.NEXT_SONG) {
+          const data = event.data as NextSongEventData
+          setSongCover(data.song.cover ?? 'https://cdn.nierot.com/memes/missing.jpg')
+          setSongTitle(data.song.title)
+          setSongArtist(data.song.artist ?? 'Artist')
+        }
+      })
+      // const u = await getUser(uid)
+      // setUser(u)
+      // await getSession(uid)
+      //   .then(async ses => {
+      //     setSession(ses)
+      //     setPlaylist(await getPlaylist(ses.playlistId!))
+
+      //     await fetch(`${backend}/playlist/number-of-songs?playlistId=${ses.playlistId}`)
+      //       .then(resp => resp.json())
+      //       .then(resp => setSongsLen(resp.songs))
+
+      //     if (playlist?.users) {
+      //       setUserLen(Object.entries(playlist.users).length | 0)
+      //     }
+
+      //     cleanupSong = listenForCurrentSong(ses.sessionId, (title, artist, cover) => {
+      //       setSongArtist(artist)
+      //       setSongTitle(title)
+      //       setSongCover(cover)
+      //     })
+      
+      //   })
 
     }
     fun()
-
-    return () => {
-      if (cleanupSong) cleanupSong.off()
-    }
-
   }, [])
 
 
-  useEffect(() => {
-    if (playlist?.users) {
-      setUserLen(Object.entries(playlist.users).length | 0)
-    }
-  }, [playlist])
+  // useEffect(() => {
+  //   if (playlist?.users) {
+  //     setUserLen(Object.entries(playlist.users).length | 0)
+  //   }
+  // }, [playlist])
 
   return <IonPage>
     <IonContent>
@@ -76,7 +99,7 @@ const SessionPage = () => {
         {/* Title */}
         <div className="center">
           <h1 className="text-center width-90">
-            Welcome {user?.username}
+            Welcome {username}
           </h1>
         </div>
 
@@ -90,7 +113,7 @@ const SessionPage = () => {
             {/* Playlist code*/}
             <h4>
               <IonIcon icon={barcode} />
-              <span className="uppercase">&nbsp;{session?.sessionId}</span>
+              <span className="uppercase">&nbsp;{session?.id}</span>
             </h4>
             <h4>
               <IonIcon icon={musicalNotes} />
