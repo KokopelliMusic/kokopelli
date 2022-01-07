@@ -1,35 +1,24 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
 import { useContext, useState } from 'react'
-import { AuthContext } from '../../context/FirebaseAuthContext'
-import { database } from '../../firebase'
 import { redirect } from '../../util'
 import './NewPlaylist.css'
 
 const NewPlaylist = () => {
 
   const [name, setName] = useState('')
-  const user = useContext(AuthContext)
-  // const playlistRef = database.ref(`users/${user.user?.uid}/playlists`)
-  const playlistRef = database.ref('/playlists')
-  const userPlaylistRef = database.ref(`/users/${user.user?.uid}/playlists`)
 
   const click = () => {
     if (name.length === 0) {
       alert('Please enter a valid name')
     }
 
-    let newList = playlistRef.push()
-
-    userPlaylistRef
-      .push(newList.key, )
-      .then(() => newList.set({
-        name,
-        user: user.user!.uid,
-        dateCreated: new Date().toISOString()
-      }))
+    window.sipapu.Playlist.create(name)
       .then(() => redirect('/home'))
-
+      .catch(err => {
+        console.error(err)
+        alert('Something went wrong, try reloading')
+      })
   }
 
   return <IonPage>
