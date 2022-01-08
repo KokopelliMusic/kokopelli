@@ -1,11 +1,12 @@
 import { IonContent, IonIcon, IonPage } from '@ionic/react'
 import { musicalNotes, barcode, pricetag, people } from 'ionicons/icons'
 import { useState, useEffect } from 'react'
-import { redirect } from '../../util'
-import './SessionPage.css'
 import { EventTypes, NextSongEventData } from 'sipapu/src/events'
 import { PlaylistType } from 'sipapu/src/services/playlist'
 import { SessionType } from 'sipapu/src/services/session'
+import { redirect } from '../../util'
+import './SessionPage.css'
+
 
 const SessionPage = () => {
 

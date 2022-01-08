@@ -1,6 +1,6 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { redirect } from '../../util'
 import './NewPlaylist.css'
 

@@ -4,9 +4,10 @@ import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import { useEffect, useState } from 'react'
 import { Sipapu } from 'sipapu'
-import { Session } from '@supabase/gotrue-js';
+import { Session } from '@supabase/gotrue-js'
+import { supabaseUrl, supabaseKey, tawaUrl } from './config.json'
 
-window.sipapu = new Sipapu('kokopelli')
+window.sipapu = new Sipapu('kokopelli', supabaseUrl, supabaseKey, tawaUrl)
 
 const SipapuContext = React.createContext<Session | null>(null)
 

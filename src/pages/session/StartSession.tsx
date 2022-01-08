@@ -241,8 +241,9 @@ const ConnectPlayer = (props: any) => {
         })
         .catch(err => {
           console.error(err)
-          // @ts-ignore
-          errorRef.current?.innerText = err.message
+          if (errorRef.current) {
+            errorRef.current.innerText = err.message
+          }
         })
       }
   }, [otp1, otp2, otp3, otp4, playlist])
