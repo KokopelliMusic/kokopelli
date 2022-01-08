@@ -1,8 +1,14 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
 import React from 'react'
-import { SongEnum, SpotifySongCreateType } from 'sipapu/src/services/song'
+// import { SpotifySongCreateType, SongEnum } from 'sipapu/dist/src/services/song'
 import './Spotify.css'
+import config from '../../config.json'
+
+type SpotifySongCreateType = unknown
+enum SongEnum {
+  SPOTIFY
+}
 
 type SpotifySearchSong = {
   title: string
@@ -28,7 +34,7 @@ export default class Spotify extends React.Component {
 
     if (!search) return
 
-    fetch(`https://api.nierot.com/search/?query=${search}`)
+    fetch(`${config.spotifyApi}?query=${search}`)
       .then(data => data.json())
       .then(data => this.parseResults(data.body.tracks.items))
   }

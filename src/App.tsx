@@ -42,7 +42,8 @@ import KokopelliRoute from './components/KokopelliRoute'
 
 const App: React.FC = () => {
 
-  if (window.sipapu.isLoggedIn()) {
+  if (false) {
+  // if (window.sipapu.isLoggedIn()) {
     return <IonApp>
         <IonReactRouter>
           <IonRouterOutlet animated>
@@ -68,13 +69,12 @@ const App: React.FC = () => {
     return <IonApp>
       <IonReactRouter>
         <IonRouterOutlet animated>
-          <KokopelliRoute path="/home" component={Home} />
           <KokopelliRoute path="/init" component={Init} />
           <KokopelliRoute path="/init/register" component={Register} />
           <KokopelliRoute path="/init/signin" component={SignIn} />
 
           <Route>
-            <Redirect to="/home" />
+            <Redirect to="/init" />
           </Route>
         </IonRouterOutlet>
       </IonReactRouter>

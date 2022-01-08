@@ -5,23 +5,23 @@ import { redirect } from '../../util'
 import './SignIn.css'
 
 const SignIn: React.FC = () => {
+  useState()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
+  // const [email, setEmail] = useState('')
+  // const [password, setPassword] = useState('')
+  let email = ''
+  let password = ''
 
-  const register = async () => {
+  const setEmail = (e: string) => email = e
+  const setPassword = (e: string) => password = e
+
+  const login = async () => {
     if (email.length === 0 || password.length === 0) {
       return alert('Please fill in both forms')
     }
-    try {
-      await window.sipapu.signIn(email, password)
-    } catch (error: any) {
-      //TODO
-      alert(error.message)
-    } finally {
-      redirect('/home')
-    }
+    await window.sipapu.signIn(email, password)
+      .then(() => redirect('/home'))
+      .catch((err: Error) => alert(err.message))
   }
 
   return <IonPage>
@@ -54,15 +54,9 @@ const SignIn: React.FC = () => {
             type="password"
             clearInput
             onIonChange={e => setPassword(e.detail.value!)} />
-          <IonInput 
-            className="width-90"
-            value={username}
-            clearInput
-            placeholder="Username"
-            onIonChange={e => setUsername(e.detail.value!)} />
         </div>
         <div className="center">
-          <IonButton className="width-90" onClick={register}>Login</IonButton>
+          <IonButton className="width-90" onClick={login}>Login</IonButton>
         </div>
 
         <div className="center">

@@ -26,7 +26,7 @@ const JoinSession = () => {
             redirect('/session')
           }
         })
-        .catch(err => {
+        .catch((err: Error) => {
           if (errorRef.current) {
             errorRef.current.innerText = err.message
           }

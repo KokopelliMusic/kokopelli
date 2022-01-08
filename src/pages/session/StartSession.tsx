@@ -2,12 +2,15 @@ import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, is
 import { arrowBack } from 'ionicons/icons'
 import { useEffect, useRef, useState } from 'react'
 import { Redirect } from 'react-router'
-import { SPOTIFY_CONFIG, webplayerUri } from '../../config.json'
+import config from '../../config.json'
 import './StartSession.css'
 import { getQueryParam, redirect } from '../../util'
 import { InAppBrowser } from '@ionic-native/in-app-browser'
-import { SpotifyCreateType } from 'sipapu/src/services/spotify'
-import { PlaylistType } from 'sipapu/src/services/playlist'
+// import { PlaylistType } from 'sipapu/dist/src/services/playlist'
+// import { SpotifyCreateType } from 'sipapu/dist/src/services/spotify'
+
+type PlaylistType = any
+type SpotifyCreateType = any
 
 const StartSession = () => {
 
@@ -119,7 +122,7 @@ const LogIntoSpotify = ({ next, setSpotify }: any) => {
       })
 
       iab.on('loadstop').subscribe(event => {
-        if (event.url.startsWith(SPOTIFY_CONFIG.redirectUri)) {
+        if (event.url.startsWith(config.SPOTIFY_CONFIG.redirectUri)) {
           const urlParam = new URLSearchParams(new URL(event.url).search)
           const code = urlParam.get('code')!
           setCode(code)
@@ -138,19 +141,19 @@ const LogIntoSpotify = ({ next, setSpotify }: any) => {
   }
 
   const createSpotifyLink = () => {
-    return `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CONFIG.clientId}&response_type=code&redirect_uri=${SPOTIFY_CONFIG.redirectUri}&scope=user-read-private%20streaming%20user-read-email`
+    return `https://accounts.spotify.com/authorize?client_id=${config.SPOTIFY_CONFIG.clientId}&response_type=code&redirect_uri=${config.SPOTIFY_CONFIG.redirectUri}&scope=user-read-private%20streaming%20user-read-email`
   }
 
   const exchangeCodeForAccessToken = async (code: string) => {
 
-    fetch(SPOTIFY_CONFIG.spotifyAuth + '/token', {
+    fetch(config.SPOTIFY_CONFIG.spotifyAuth + '/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         code,
-        redirect_uri: SPOTIFY_CONFIG.redirectUri
+        redirect_uri: config.SPOTIFY_CONFIG.redirectUri
       })
     })
     .then(data => data.json())
@@ -265,7 +268,7 @@ const ConnectPlayer = (props: any) => {
 
   return <div id="connect" className="text-center">
     <h1>Connect</h1>
-    <p>Now navigate to <span id="link">{webplayerUri}</span> on your tv and fill in the code below.</p>
+    <p>Now navigate to <span id="link">{config.webplayerUri}</span> on your tv and fill in the code below.</p>
 
     <p ref={errorRef} className="text-error"/>
 

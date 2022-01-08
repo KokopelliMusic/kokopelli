@@ -1,11 +1,19 @@
 import { IonContent, IonIcon, IonPage } from '@ionic/react'
 import { musicalNotes, barcode, pricetag, people } from 'ionicons/icons'
 import { useState, useEffect } from 'react'
-import { EventTypes, NextSongEventData } from 'sipapu/src/events'
-import { PlaylistType } from 'sipapu/src/services/playlist'
-import { SessionType } from 'sipapu/src/services/session'
+// import { EventTypes, NextSongEventData } from 'sipapu/dist/src/events'
+// import { PlaylistType } from 'sipapu/dist/src/services/playlist'
+// import { SessionType } from 'sipapu/dist/src/services/session'
 import { redirect } from '../../util'
 import './SessionPage.css'
+
+enum EventTypes {
+  NEXT_SONG
+}
+
+type NextSongEventData = any
+type SessionType = any
+type PlaylistType = any
 
 
 const SessionPage = () => {

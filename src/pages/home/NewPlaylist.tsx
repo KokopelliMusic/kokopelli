@@ -15,7 +15,7 @@ const NewPlaylist = () => {
 
     window.sipapu.Playlist.create(name)
       .then(() => redirect('/home'))
-      .catch(err => {
+      .catch((err: Error) => {
         console.error(err)
         alert('Something went wrong, try reloading')
       })

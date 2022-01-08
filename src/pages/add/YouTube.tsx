@@ -1,9 +1,13 @@
 import { IonButton, IonContent, IonIcon, IonInput, IonPage } from '@ionic/react'
 import { arrowBack } from 'ionicons/icons'
 import './YouTube.css'
-import { youtubeApi } from '../../config.json'
+import config from '../../config.json'
 import React, { useEffect, useState } from 'react'
-import { SongEnum } from 'sipapu/src/services/song'
+// import { SongEnum } from 'sipapu/dist/src/services/song'
+
+enum SongEnum {
+  YOUTUBE
+}
 
 const YouTube = () => {
 
@@ -39,7 +43,7 @@ const YouTube = () => {
       return false
     }
 
-    fetch(youtubeApi + '?id=' + id)
+    fetch(config.youtubeApi + '?id=' + id)
       .then(res => res.json())
       .then(video => {
         setVideo(video)

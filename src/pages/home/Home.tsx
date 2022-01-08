@@ -1,23 +1,23 @@
 import { IonContent, IonPage } from '@ionic/react'
-import { useEffect, useState } from 'react'
 import './Home.css'
 
 const Home = () => {
+  const username = 'help'
 
-  const [username, setUsername] = useState('Loading')
+  // const [username, setUsername] = useState('Loading')
 
-  useEffect(() => {
-    const fun = async () => {
-      await window.sipapu.getUsername()
-        .then(u => setUsername(u))
-        .catch(err => {
-          console.error(err)
-          alert('Something went wrong, try reloading')
-        })
-    }
+  // useEffect(() => {
+    // const fun = async () => {
+    //   await window.sipapu.getUsername()
+    //     .then(u => setUsername(u))
+    //     .catch(err => {
+    //       console.error(err)
+    //       alert('Something went wrong, try reloading')
+    //     })
+    // }
 
-    fun()
-  }, [])
+    // fun()
+  // }, [])
 
   return <IonPage>
     <IonContent>

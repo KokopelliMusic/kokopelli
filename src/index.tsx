@@ -3,29 +3,31 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import { useEffect, useState } from 'react'
-import { Sipapu } from 'sipapu'
+// import { Sipapu } from 'sipapu'
 import { Session } from '@supabase/gotrue-js'
-import { supabaseUrl, supabaseKey, tawaUrl } from './config.json'
+import config from './config.json'
+import { setupIonicReact } from '@ionic/react'
 
-window.sipapu = new Sipapu('kokopelli', supabaseUrl, supabaseKey, tawaUrl)
+// window.sipapu = new Sipapu('kokopelli', config.supabaseUrl, config.supabaseKey, config.tawaUrl)
 
-const SipapuContext = React.createContext<Session | null>(null)
+// const SipapuContext = React.createContext<Session | null>(null)
 
 const SipapuClient = () => {
-  const [session, setSession] = useState<Session | null>(null)
+  // const [session, setSession] = useState<Session | null>(null)
 
-  useEffect(() => {
-    setSession(window.sipapu.client.auth.session())
+  // useEffect(() => {
+  //   setSession(window.sipapu.client.auth.session())
 
-    window.sipapu.client.auth.onAuthStateChange((_event, session) => setSession(session))
-  }, [])
+  //   window.sipapu.client.auth.onAuthStateChange((_event, session) => setSession(session))
+  // }, [])
 
-  return <SipapuContext.Provider value={session}>
-    <App />
-  </SipapuContext.Provider>
+  // return <SipapuContext.Provider value={session}>
+    //  <App />
+  //  </SipapuContext.Provider>
+  return <App />
 }
 
-
+setupIonicReact()
 ReactDOM.render(
   <React.StrictMode>
     <SipapuClient />

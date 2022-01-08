@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react'
 import './Playlists.css'
 import { arrowBack } from 'ionicons/icons'
 import { redirect } from '../../util'
-import { PlaylistType } from 'sipapu/src/services/playlist'
+// import { PlaylistType } from 'sipapu/dist/src/services/playlist'
+
+type PlaylistType = any
 
 const Playlists = () => {
 
